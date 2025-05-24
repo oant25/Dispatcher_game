@@ -6,29 +6,43 @@
 
 #IncludeRegexTransform: 
 
-/Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.h
+/Users/extile/Desktop/123/Dispatcher_game/Airplane.h
 raylib.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/raylib.h
-runway.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/runway.h
-
-/Users/extile/Desktop/123/Dispatcher_game/untitled/main.cpp
-raylib.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/raylib.h
-cmath
+/Users/extile/Desktop/123/Dispatcher_game/raylib.h
+Structures.h
+/Users/extile/Desktop/123/Dispatcher_game/Structures.h
+vector
 -
-aircraft.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.h
-runway.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/runway.h
+cstddef
+-
 
-/Users/extile/Desktop/123/Dispatcher_game/untitled/runway.h
+/Users/extile/Desktop/123/Dispatcher_game/Structures.h
 raylib.h
-/Users/extile/Desktop/123/Dispatcher_game/untitled/raylib.h
+/Users/extile/Desktop/123/Dispatcher_game/raylib.h
+unordered_map
+-
+vector
+-
+
+/Users/extile/Desktop/123/Dispatcher_game/main.cpp
+raylib.h
+/Users/extile/Desktop/123/Dispatcher_game/raylib.h
+Airplane.h
+/Users/extile/Desktop/123/Dispatcher_game/Airplane.h
+Structures.h
+/Users/extile/Desktop/123/Dispatcher_game/Structures.h
+vector
+-
+raymath.h
+/Users/extile/Desktop/123/Dispatcher_game/raymath.h
 
 /usr/local/Cellar/raylib/5.5/include/raylib.h
 stdarg.h
 -
 stdbool.h
+-
+
+/usr/local/Cellar/raylib/5.5/include/raymath.h
+math.h
 -
 
