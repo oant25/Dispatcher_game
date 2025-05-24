@@ -63,10 +63,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/extile/Desktop/disp/Dispatcher_game/untitled
+CMAKE_SOURCE_DIR = /Users/extile/Desktop/123/Dispatcher_game/untitled
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/YourProjectName.dir/depend.make
@@ -79,28 +79,43 @@ include CMakeFiles/YourProjectName.dir/flags.make
 
 CMakeFiles/YourProjectName.dir/main.cpp.o: CMakeFiles/YourProjectName.dir/flags.make
 CMakeFiles/YourProjectName.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/YourProjectName.dir/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/YourProjectName.dir/main.cpp.o -c /Users/extile/Desktop/disp/Dispatcher_game/untitled/main.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/YourProjectName.dir/main.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/YourProjectName.dir/main.cpp.o -c /Users/extile/Desktop/123/Dispatcher_game/untitled/main.cpp
 
 CMakeFiles/YourProjectName.dir/main.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/YourProjectName.dir/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/extile/Desktop/disp/Dispatcher_game/untitled/main.cpp > CMakeFiles/YourProjectName.dir/main.cpp.i
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/extile/Desktop/123/Dispatcher_game/untitled/main.cpp > CMakeFiles/YourProjectName.dir/main.cpp.i
 
 CMakeFiles/YourProjectName.dir/main.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/YourProjectName.dir/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/extile/Desktop/disp/Dispatcher_game/untitled/main.cpp -o CMakeFiles/YourProjectName.dir/main.cpp.s
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/extile/Desktop/123/Dispatcher_game/untitled/main.cpp -o CMakeFiles/YourProjectName.dir/main.cpp.s
+
+CMakeFiles/YourProjectName.dir/aircraft.cpp.o: CMakeFiles/YourProjectName.dir/flags.make
+CMakeFiles/YourProjectName.dir/aircraft.cpp.o: ../aircraft.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/YourProjectName.dir/aircraft.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/YourProjectName.dir/aircraft.cpp.o -c /Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.cpp
+
+CMakeFiles/YourProjectName.dir/aircraft.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/YourProjectName.dir/aircraft.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.cpp > CMakeFiles/YourProjectName.dir/aircraft.cpp.i
+
+CMakeFiles/YourProjectName.dir/aircraft.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/YourProjectName.dir/aircraft.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.cpp -o CMakeFiles/YourProjectName.dir/aircraft.cpp.s
 
 # Object files for target YourProjectName
 YourProjectName_OBJECTS = \
-"CMakeFiles/YourProjectName.dir/main.cpp.o"
+"CMakeFiles/YourProjectName.dir/main.cpp.o" \
+"CMakeFiles/YourProjectName.dir/aircraft.cpp.o"
 
 # External object files for target YourProjectName
 YourProjectName_EXTERNAL_OBJECTS =
 
 YourProjectName: CMakeFiles/YourProjectName.dir/main.cpp.o
+YourProjectName: CMakeFiles/YourProjectName.dir/aircraft.cpp.o
 YourProjectName: CMakeFiles/YourProjectName.dir/build.make
 YourProjectName: CMakeFiles/YourProjectName.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable YourProjectName"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable YourProjectName"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/YourProjectName.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -113,6 +128,6 @@ CMakeFiles/YourProjectName.dir/clean:
 .PHONY : CMakeFiles/YourProjectName.dir/clean
 
 CMakeFiles/YourProjectName.dir/depend:
-	cd /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/extile/Desktop/disp/Dispatcher_game/untitled /Users/extile/Desktop/disp/Dispatcher_game/untitled /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/YourProjectName.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/extile/Desktop/123/Dispatcher_game/untitled /Users/extile/Desktop/123/Dispatcher_game/untitled /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/YourProjectName.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/YourProjectName.dir/depend
 

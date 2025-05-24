@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/YourProjectName.dir/aircraft.cpp.o"
   "CMakeFiles/YourProjectName.dir/main.cpp.o"
   "YourProjectName"
   "YourProjectName.pdb"

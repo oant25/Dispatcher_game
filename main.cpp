@@ -1,5 +1,7 @@
 #include "raylib.h"
 #include <cmath>
+#include "aircraft.h"
+#include "runway.h"
 
 int main() {
     const int screenWidth = 1450;
@@ -31,11 +33,23 @@ int main() {
     // Загрузка фоновой текстуры
     Texture2D background = LoadTexture("res/1234.png"); // Укажите путь к вашему PNG
 
+    Texture2D planeTextures[5];
+    for (int i = 0; i < 5; i++) {
+        planeTextures[i] = LoadTexture(TextFormat("res/plane%d.png", i)); // Загрузите свои текстуры
+    }
+    for (int i = 0; i < 5; i++) {
+        if (planeTextures[i].id == 0) {
+            CloseWindow();
+            return -1;
+        }
+    }
+
     // Проверка загрузки текстуры
     if (background.id == 0) {
         CloseWindow();
         return -1;
     }
+
 
     Rectangle sourceRec = { 0.0f, 0.0f, (float)background.width, (float)background.height };
     Rectangle destRec = { 0.0f, 0.0f, screenWidth/1.6f, (float)screenHeight };
@@ -55,7 +69,60 @@ int main() {
     float rotationAngle = 0.0f;
     const float rotationSpeed = 1.5f;
 
+
+
+
+
+    const int numPlanes = 5;
+    Aircraft planes[numPlanes] = {
+            Aircraft(planeTextures[0], {500, 600}, 0.5f, 1.0f, 0),
+            Aircraft(planeTextures[1], {500, 600}, 0.7f, 0.8f, 1),
+            Aircraft(planeTextures[2], {500, 600}, 0.6f, 1.2f, 2),
+            Aircraft(planeTextures[3], {500, 600}, 0.4f, 1.5f, 3),
+            Aircraft(planeTextures[4], {500, 600}, 0.3f, 2.0f, 4)
+    };
+    Runway runways[] = {
+            { Rectangle{145, 115, 580, 60}, false, 4 },
+            { Rectangle{145, 215, 580, 60}, false, 4 },
+            { Rectangle{175, 285, 510, 40}, false, 2 },
+            { Rectangle{175, 330, 510, 40}, false, 2 }
+    };
+
+    ParkingSpot parkingSpots[] = {
+            { Rectangle{275-15, 408, 40, 65}, false },
+            { Rectangle{323-15, 408, 40, 65}, false },
+            { Rectangle{371-15, 408, 40, 65}, false },
+            { Rectangle{419-15, 408, 40, 65}, false },
+            { Rectangle{467-15, 408, 40, 65}, false },
+            { Rectangle{515-15, 408, 40, 65}, false },
+            { Rectangle{563-15, 408, 40, 65}, false }
+    };
+
+
     while (!WindowShouldClose()) {
+
+// Обработка клика по парковке
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            Vector2 mousePos = GetMousePosition();
+            for (auto& runway : runways) {
+                if (CheckCollisionPointRec(mousePos, runway.area)) {
+                    planes[0].Land(runway);
+                    break;
+                }
+            }
+        }
+
+// Обработка клика по парковке
+        if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+            Vector2 mousePos = GetMousePosition();
+            for (auto& spot : parkingSpots) {
+                if (CheckCollisionPointRec(mousePos, spot.area)) {
+                    planes[0].MoveToParking(spot);
+                    break;
+                }
+            }
+        }
+
 
         rotationAngle += rotationSpeed;
         if (rotationAngle >= 360) rotationAngle = 0;
@@ -70,6 +137,8 @@ int main() {
             }
         }
 
+
+
         // отрисовка
         DrawLine(10,10,60,60,BLACK);
         BeginDrawing();
@@ -78,6 +147,7 @@ int main() {
         DrawRectangle(0, 0, screenWidth/1.6, screenHeight, currentColor);
         DrawRectangle(920,10,515,400,BLACK);
 
+
         //кнопки
         for (int i = 0; i < numButtons; i++) {
             Color btnColor = CheckCollisionPointRec(GetMousePosition(), buttons[i])
@@ -85,6 +155,7 @@ int main() {
 
             DrawRectangleRec(buttons[i], btnColor);
         }
+
         // текст кнопки
         const char* text = TextFormat("Start level");
         DrawText(text,
@@ -154,6 +225,87 @@ int main() {
                 WHITE
         );
         DrawFPS(1000-78,10);
+
+
+
+
+
+        //==================================================== Non disign disain plase for airplanes
+//
+//
+//
+////Взлетно посадочные полосы:
+////верхняя полоса
+//        DrawRectangle(145,115, 580, 30, BLACK);
+//        DrawRectangle(145,145, 580, 30, GRAY);
+//
+////вторая сверху
+//        DrawRectangle(145,115+100, 580, 30, BLACK);
+//        DrawRectangle(145,145+100, 580, 30, GRAY);
+//
+////вторая снизу
+//        DrawRectangle(175,115+100+70, 510, 20, BLACK);
+//        DrawRectangle(175,135+100+70, 510, 20, GRAY);
+//
+////нижняя полоса
+//        DrawRectangle(175,115+100+70+50, 510, 20, BLACK);
+//        DrawRectangle(175,135+100+70+50, 510, 20, GRAY);
+//
+//
+////дорожки между полосами
+//
+//        DrawRectangle(435,170,20,55,BLACK);
+//
+//        DrawRectangle(435,250,20,55,BLACK);
+//
+//        DrawRectangle(555,250,20,55,BLACK);
+//
+//        DrawRectangle(555,307,20,40,BLACK);
+//
+//        DrawRectangle(300,307,20,40,BLACK);
+//
+//        DrawRectangle(435,307,20,40,BLACK);
+//
+////парковка для самолетов
+//
+//        DrawRectangle(235,390,370,110,BBLACK);
+//
+////парковочные полосы на парковке
+//
+//        DrawRectangle(275,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48*2,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48*3,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48*4,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48*5,408,7,65,WHITE);
+//
+//        DrawRectangle(275+48*6,408,7,65,WHITE);
+
+
+        Aircraft planes[numPlanes] = {
+                Aircraft(planeTextures[0], {700, 300}, 0.07f, 1.0f, 0),
+                Aircraft(planeTextures[1], {500, 600}, 0.07f, 0.8f, 1),
+                Aircraft(planeTextures[2], {500, 600}, 0.06f, 1.2f, 2),
+                Aircraft(planeTextures[3], {500, 600}, 0.0f, 1.5f, 3),
+                Aircraft(planeTextures[4], {500, 600}, 0.03f, 2.0f, 4)
+        };
+        for (int i = 0; i < numPlanes; i++) {
+            planes[i].Update();
+            planes[i].Draw();
+        }
+        // В цикле отрисовки
+        for (const auto& runway : runways) {
+            DrawRectangleLinesEx(runway.area, 2, runway.isOccupied ? RED : GREEN);
+        }
+
+        for (const auto& spot : parkingSpots) {
+            DrawRectangleLinesEx(spot.area, 2, spot.isOccupied ? RED : BLUE);
+        }
 
         EndDrawing();
     }

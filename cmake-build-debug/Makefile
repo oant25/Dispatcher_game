@@ -68,10 +68,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/extile/Desktop/disp/Dispatcher_game/untitled
+CMAKE_SOURCE_DIR = /Users/extile/Desktop/123/Dispatcher_game/untitled
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -100,9 +100,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -143,6 +143,33 @@ YourProjectName/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/YourProjectName.dir/build.make CMakeFiles/YourProjectName.dir/build
 .PHONY : YourProjectName/fast
 
+aircraft.o: aircraft.cpp.o
+
+.PHONY : aircraft.o
+
+# target to build an object file
+aircraft.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/YourProjectName.dir/build.make CMakeFiles/YourProjectName.dir/aircraft.cpp.o
+.PHONY : aircraft.cpp.o
+
+aircraft.i: aircraft.cpp.i
+
+.PHONY : aircraft.i
+
+# target to preprocess a source file
+aircraft.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/YourProjectName.dir/build.make CMakeFiles/YourProjectName.dir/aircraft.cpp.i
+.PHONY : aircraft.cpp.i
+
+aircraft.s: aircraft.cpp.s
+
+.PHONY : aircraft.s
+
+# target to generate assembly for a file
+aircraft.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/YourProjectName.dir/build.make CMakeFiles/YourProjectName.dir/aircraft.cpp.s
+.PHONY : aircraft.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -179,6 +206,9 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... YourProjectName"
+	@echo "... aircraft.o"
+	@echo "... aircraft.i"
+	@echo "... aircraft.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

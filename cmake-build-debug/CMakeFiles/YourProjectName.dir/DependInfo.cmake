@@ -4,7 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/Users/extile/Desktop/disp/Dispatcher_game/untitled/main.cpp" "/Users/extile/Desktop/disp/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/YourProjectName.dir/main.cpp.o"
+  "/Users/extile/Desktop/123/Dispatcher_game/untitled/aircraft.cpp" "/Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/YourProjectName.dir/aircraft.cpp.o"
+  "/Users/extile/Desktop/123/Dispatcher_game/untitled/main.cpp" "/Users/extile/Desktop/123/Dispatcher_game/untitled/cmake-build-debug/CMakeFiles/YourProjectName.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")
 

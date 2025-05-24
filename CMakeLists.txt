@@ -10,7 +10,10 @@ find_package(PkgConfig REQUIRED)
 pkg_search_module(RAYLIB REQUIRED raylib)
 
 # Создаем исполняемый файл
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp
+        aircraft.cpp
+        runway.h
+        )
 
 # Подключаем заголовки и библиотеки
 target_include_directories(${PROJECT_NAME} PRIVATE ${RAYLIB_INCLUDE_DIRS})
