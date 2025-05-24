@@ -7,20 +7,18 @@
 Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius)
         : texture(tex), size(sz), color(clr),
           speed(PLANE_SPEEDS.at(sz)),
-          movementSpeed(PARKING_SPEEDS.at(sz)), // Скорость из словаря
+          movementSpeed(PARKING_SPEEDS.at(sz)),
           assignedOrbit(zone),
           isFlying(true),
           orbitAngle((float)GetRandomValue(0, 360))
 {
-    // Генерация случайной позиции на радаре
     float angle = GetRandomValue(0, 360) * DEG2RAD;
-    float radius = GetRandomValue(20, radarRadius - 20); // Отступ от краев
+    float radius = GetRandomValue(20, radarRadius - 20);
     radarPosition = {
             radarCenter.x + radius * cosf(angle),
             radarCenter.y + radius * sinf(angle)
     };
 
-    // Инициализация позиции на орбите
     if (assignedOrbit) {
         position.x = assignedOrbit->center.x + assignedOrbit->radius * cosf(orbitAngle * DEG2RAD);
         position.y = assignedOrbit->center.y + assignedOrbit->radius * sinf(orbitAngle * DEG2RAD);
@@ -30,27 +28,17 @@ Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 ra
 
 void Airplane::UpdateOrbit() {
     if (assignedOrbit && isFlying) {
-        // Обновление угла с учетом времени кадра
         orbitAngle += speed * GetFrameTime();
         if (orbitAngle >= 360) orbitAngle -= 360;
 
-        // Расчет новой позиции
         position.x = assignedOrbit->center.x + assignedOrbit->radius * cosf(orbitAngle * DEG2RAD);
         position.y = assignedOrbit->center.y + assignedOrbit->radius * sinf(orbitAngle * DEG2RAD);
-
-        // Поворот текстуры (0° = вверх)
-        rotation = orbitAngle -180;
-
-        }
+        rotation = orbitAngle - 180;
+    }
 }
 
-
-// Airplane.cpp
 void Airplane::Draw() const {
-    // Получаем масштаб из конфигурации
-    float scale = PLANE_SCALES.at(size); // Используем .at() для безопасности
-
-    // Отрисовка текстуры
+    float scale = PLANE_SCALES.at(size);
     Rectangle dest = {
             position.x,
             position.y,
@@ -66,14 +54,12 @@ void Airplane::Draw() const {
                    color);
 }
 
-
 void Airplane::StartLanding(const LandingStrip& strip) {
     isLanding = true;
     isFlying = false;
 
-    // Находим свободное парковочное место
     ParkingSpot* targetSpot = nullptr;
-    for (auto& spot : parkingSpots) { // Теперь доступно
+    for (auto& spot : parkingSpots) {
         if (!spot.occupied) {
             targetSpot = &spot;
             spot.occupied = true;
@@ -82,7 +68,6 @@ void Airplane::StartLanding(const LandingStrip& strip) {
     }
     if (targetSpot) {
         targetSpot->occupied = true;
-        // Формируем путь
         currentPath.clear();
         currentPath.push_back(strip.startPoint);
         currentPath.push_back(strip.endPoint);
@@ -94,23 +79,19 @@ void Airplane::StartLanding(const LandingStrip& strip) {
     }
 }
 
-
-
-    void Airplane::UpdateMovement() {
-        if (currentPathIndex >= currentPath.size()) {
-            if (isParking) {
-                // Увеличиваем счетчик ДО проверки условия
-                Global::parkedCount++;
-
-                // Проверяем, достигнуто ли необходимое количество
-                if (Global::parkedCount >= Global::parkedNeeded) {
-                    ResetGame();
-                }
-
-                isParking = false;
-            }
-            return;
+void Airplane::UpdateMovement() {
+    if (isParked) {
+        return;
+    }
+    if (currentPathIndex >= currentPath.size()) {
+        isParked = true;
+        Global::parkedCount++;
+        TraceLog(LOG_INFO, "Plane parked. Total parked: %d", Global::parkedCount);
+        if (Global::parkedCount >= Global::parkedNeeded) {
+            ResetGame();
         }
+        return;
+    }
     Vector2 target = currentPath[currentPathIndex];
     Vector2 direction = Vector2Subtract(target, position);
     float distance = Vector2Length(direction);

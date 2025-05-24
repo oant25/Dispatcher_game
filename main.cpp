@@ -13,10 +13,10 @@ const int screenHeight = 750;
 std::vector<Airplane> airplanes;
 std::vector<OrbitZone> orbitZones(NUM_ORBIT_ZONES);
 std::vector<ParkingSpot> parkingSpots(NUM_PARKING_SPOTS);
-
+int level = 0;
 namespace Global {
     int level = 1;
-    int parkedNeeded = 12;
+    int parkedNeeded = 4;
     int parkedCount = 0;
 }
 
@@ -26,6 +26,7 @@ void ResetGame() {
     for (auto& zone : orbitZones) zone.occupied = false;
     Global::parkedCount = 0;
     Global::level++;
+    Global::parkedNeeded += 2; // Increase planes needed per level
 }
 
 
@@ -121,10 +122,19 @@ void InitializeParking() {
 }
 int main() {
     InitWindow(screenWidth, screenHeight, "Air Traffic Control");
+    if (Global::level >= 1){
+        level= Global::level;
+    }
+    float alpha = 0;
 
     // Загрузка текстур
+    Texture2D fogTexture; // Это переменная, где будет храниться туман
+    fogTexture = LoadTexture("res/4321.jpg"); // Загружаем картинку
     Texture2D background = LoadTexture("res/1234.png");
     Texture2D planeTextures[5];
+    if (fogTexture.id == 0) {
+        printf("Ошибка: не удалось загрузить туман!\n");
+    }
     for(int i = 0; i < 5; i++) {
         planeTextures[i] = LoadTexture(TextFormat("res/s%d.png", i+1));
         if (planeTextures[i].id == 0) {
@@ -312,19 +322,35 @@ int main() {
             }
         }
 
-        DrawText(TextFormat("Parked: %d", Global::parkedCount),
-                 screenWidth - 220, 20, 30, GREEN);
 
-        for (const auto& strip : landingStripsData) {
-            // Рисуем линии между точками пути
-            for (size_t i = 0; i < strip.pathToParking.size() - 1; ++i) {
-                DrawLineV(strip.pathToParking[i], strip.pathToParking[i+1], RED);
-            }
-        }
 
         DrawText(TextFormat("Level: %d", Global::level), screenWidth - 220, 50, 30, GREEN);
         DrawText(TextFormat("Left: %d", Global::parkedNeeded - Global::parkedCount), screenWidth - 220, 80, 30, GREEN);
+        // Определяем размеры области, где будет поле и туман
+        float gameWidth = screenWidth / 1.6f; // Ширина поля (как в твоём примере)
+        float gameHeight = screenHeight;      // Высота поля (весь экран по высоте)
 
+// Рисуем игровое поле
+
+
+// Считаем, насколько густой туман
+// Прозрачность зависит от уровня
+        if (IsKeyPressed(KEY_D)) alpha = alpha+0.05;
+        if (IsKeyPressed(KEY_S)) alpha = alpha-0.05;
+
+
+// Создаем цвет для тумана с прозрачностью
+        Color fogColor = {255, 255, 255, (unsigned char)(alpha * 255)};
+
+// Рисуем туман поверх поля
+        DrawTexturePro(
+                fogTexture, // Текстура тумана (4321.png)
+                {0, 0, (float)fogTexture.width, (float)fogTexture.height}, // Берем всю картинку
+                {0, 0, gameWidth, gameHeight}, // Рисуем в ту же область, что и поле
+                {0, 0}, // Точка поворота (не трогаем)
+                0.0f,   // Угол поворота (не поворачиваем)
+                fogColor // Цвет с прозрачностью
+        );
 
 
 
