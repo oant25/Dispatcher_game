@@ -61,12 +61,12 @@ void InitializeOrbitZones() {
     }
     orbitZones[0] = { centers[0], 150.0f, false };
     orbitZones[1] = { centers[1], 80.0f, false };
-    orbitZones[2] = { centers[3], 200.0f, false };
-    orbitZones[3] = { centers[4], 150.0f, false };
-    orbitZones[4] = { centers[5], 100.0f, false };
-    orbitZones[5] = { centers[6], 180.0f, false };
-    orbitZones[6] = { centers[7], 100.0f, false };
-    orbitZones[7] = { centers[8], 130.0f, false };
+    orbitZones[2] = { centers[2], 200.0f, false };
+    orbitZones[3] = { centers[3], 150.0f, false };
+    orbitZones[4] = { centers[4], 100.0f, false };
+    orbitZones[5] = { centers[5], 180.0f, false };
+    orbitZones[6] = { centers[6], 100.0f, false };
+    orbitZones[7] = { centers[7], 130.0f, false };
 }
 
 void InitializeStrips() {
@@ -281,30 +281,16 @@ int main() {
                 float radarRadius = radarSize / 2 - 15;
 
                 // Рассчитываем относительное положение самолета
-                Vector2 planePosGlobal = plane.position;
-                Vector2 relativePos = {
-                        planePosGlobal.x - radarCenter.x,
-                        planePosGlobal.y - radarCenter.y
-                };
-
                 // Масштабируем координаты
-                float maxOrbitRadius = 400.0f; // Должно совпадать с максимальным радиусом орбит
-                float scaleFactor = radarRadius / maxOrbitRadius;
-
-                Vector2 radarPoint = {
-                        radarCenter.x + relativePos.x * scaleFactor,
-                        radarCenter.y + relativePos.y * scaleFactor
-                };
-
-                // Проверяем, находится ли точка внутри радара
-                if (CheckCollisionPointCircle(radarPoint, radarCenter, radarRadius)) {
-                    DrawCircleV(radarPoint, 4, GREEN); // Увеличили размер точки
-                    // Отладочный вывод (раскомментируйте при необходимости)
-                    // TraceLog(LOG_INFO, "Точка радара: (%.1f, %.1f)", radarPoint.x, radarPoint.y);
+                // TraceLog(LOG_INFO, "Точка радара: (%.1f, %.1f)", radarPoint.x, radarPoint.y);
                 }
             }
-        }
 
+        for (const auto& plane : airplanes) {
+            if (plane.isFlying) {
+                DrawCircleV(plane.radarPosition, 4, GREEN);
+            }
+        }
 
 
 

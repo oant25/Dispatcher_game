@@ -4,13 +4,21 @@
 
 Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius)
         : texture(tex), size(sz), color(clr),
-          speed(PLANE_SPEEDS.at(sz)), // Скорость из словаря
+          speed(PLANE_SPEEDS.at(sz)),
           assignedOrbit(zone),
           isFlying(true),
-          orbitAngle((float)GetRandomValue(0, 360)) // Скорость без умножения на 60
+          orbitAngle((float)GetRandomValue(0, 360))
 {
+    // Генерация случайной позиции на радаре
+    float angle = GetRandomValue(0, 360) * DEG2RAD;
+    float radius = GetRandomValue(20, radarRadius - 20); // Отступ от краев
+    radarPosition = {
+            radarCenter.x + radius * cosf(angle),
+            radarCenter.y + radius * sinf(angle)
+    };
+
+    // Инициализация позиции на орбите
     if (assignedOrbit) {
-        // Начальная позиция на орбите
         position.x = assignedOrbit->center.x + assignedOrbit->radius * cosf(orbitAngle * DEG2RAD);
         position.y = assignedOrbit->center.y + assignedOrbit->radius * sinf(orbitAngle * DEG2RAD);
         assignedOrbit->occupied = true;

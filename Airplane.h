@@ -28,6 +28,8 @@ public:
     OrbitZone* assignedOrbit;
     float orbitAngle;
 
+    Vector2 radarPosition;
+
     Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius);
     void UpdateOrbit();
     void Draw() const;
