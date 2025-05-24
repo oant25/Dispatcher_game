@@ -1,10 +1,13 @@
 #include "Airplane.h"
 #include <math.h>
 #include "raymath.h"
+#include "Global.h"
+#include "Structures.h"
 
 Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius)
         : texture(tex), size(sz), color(clr),
           speed(PLANE_SPEEDS.at(sz)),
+          movementSpeed(PARKING_SPEEDS.at(sz)), // Скорость из словаря
           assignedOrbit(zone),
           isFlying(true),
           orbitAngle((float)GetRandomValue(0, 360))
@@ -63,40 +66,60 @@ void Airplane::Draw() const {
                    color);
 }
 
+
 void Airplane::StartLanding(const LandingStrip& strip) {
     isLanding = true;
     isFlying = false;
-    currentPath = {
-            strip.startPoint,
-            strip.endPoint
-    };
-    currentPath.insert(currentPath.end(), strip.pathToParking.begin(), strip.pathToParking.end());
-    currentPathIndex = 0;
 
-    // Освобождаем орбиту для других самолетов
-    if (assignedOrbit) assignedOrbit->occupied = false;
+    // Находим свободное парковочное место
+    ParkingSpot* targetSpot = nullptr;
+    for (auto& spot : parkingSpots) { // Теперь доступно
+        if (!spot.occupied) {
+            targetSpot = &spot;
+            spot.occupied = true;
+            break;
+        }
+    }
+    if (targetSpot) {
+        targetSpot->occupied = true;
+        // Формируем путь
+        currentPath.clear();
+        currentPath.push_back(strip.startPoint);
+        currentPath.push_back(strip.endPoint);
+        currentPath.insert(currentPath.end(), strip.pathToParking.begin(), strip.pathToParking.end());
+        currentPath.push_back({targetSpot->area.x + 3, targetSpot->area.y + 32});
+
+        currentPathIndex = 0;
+        assignedOrbit->occupied = false;
+    }
 }
 
-void Airplane::UpdateMovement() {
-    if (currentPathIndex >= currentPath.size()) return;
 
+
+    void Airplane::UpdateMovement() {
+        if (currentPathIndex >= currentPath.size()) {
+            if (isParking) {
+                // Увеличиваем счетчик ДО проверки условия
+                Global::parkedCount++;
+
+                // Проверяем, достигнуто ли необходимое количество
+                if (Global::parkedCount >= Global::parkedNeeded) {
+                    ResetGame();
+                }
+
+                isParking = false;
+            }
+            return;
+        }
     Vector2 target = currentPath[currentPathIndex];
     Vector2 direction = Vector2Subtract(target, position);
     float distance = Vector2Length(direction);
 
-
     if (distance < 2.0f) {
         currentPathIndex++;
-        if (currentPathIndex >= currentPath.size()) {
-            isLanding = false;
-            isParking = true;
-            return;
-        }
-        target = currentPath[currentPathIndex];
-        direction = Vector2Subtract(target, position);
     }
 
     position = Vector2Add(position,
-                          Vector2Scale(Vector2Normalize(direction), movementSpeed));
+                          Vector2Scale(Vector2Normalize(direction), movementSpeed * GetFrameTime()));
     rotation = atan2f(direction.y, direction.x) * RAD2DEG + 90;
 }

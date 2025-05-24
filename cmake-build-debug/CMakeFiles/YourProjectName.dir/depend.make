@@ -3,11 +3,13 @@
 
 CMakeFiles/YourProjectName.dir/Airplane.cpp.o: ../Airplane.cpp
 CMakeFiles/YourProjectName.dir/Airplane.cpp.o: ../Airplane.h
+CMakeFiles/YourProjectName.dir/Airplane.cpp.o: ../Global.h
 CMakeFiles/YourProjectName.dir/Airplane.cpp.o: ../Structures.h
 CMakeFiles/YourProjectName.dir/Airplane.cpp.o: /usr/local/Cellar/raylib/5.5/include/raylib.h
 CMakeFiles/YourProjectName.dir/Airplane.cpp.o: /usr/local/Cellar/raylib/5.5/include/raymath.h
 
 CMakeFiles/YourProjectName.dir/main.cpp.o: ../Airplane.h
+CMakeFiles/YourProjectName.dir/main.cpp.o: ../Global.h
 CMakeFiles/YourProjectName.dir/main.cpp.o: ../Structures.h
 CMakeFiles/YourProjectName.dir/main.cpp.o: ../main.cpp
 CMakeFiles/YourProjectName.dir/main.cpp.o: /usr/local/Cellar/raylib/5.5/include/raylib.h

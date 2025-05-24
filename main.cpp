@@ -6,15 +6,35 @@
 const int screenWidth = 1450;
 const int screenHeight = 750;
 
-const int NUM_ORBIT_ZONES = 8;
-OrbitZone orbitZones[NUM_ORBIT_ZONES];
+#include "Global.h"
+
+
+// Инициализация глобальных переменных
+std::vector<Airplane> airplanes;
+std::vector<OrbitZone> orbitZones(NUM_ORBIT_ZONES);
+std::vector<ParkingSpot> parkingSpots(NUM_PARKING_SPOTS);
+
+namespace Global {
+    int level = 1;
+    int parkedNeeded = 12;
+    int parkedCount = 0;
+}
+
+void ResetGame() {
+    airplanes.clear();
+    for (auto& spot : parkingSpots) spot.occupied = false;
+    for (auto& zone : orbitZones) zone.occupied = false;
+    Global::parkedCount = 0;
+    Global::level++;
+}
+
+
 
 // Глобальные переменные
-std::vector<Airplane> airplanes;
+
 Color NONE = {0,0,0,0};
-Strip landingStrips[4];
-const int NUM_PARKING_SPOTS = 14; // Увеличили с 7 до 14
-ParkingSpot parkingSpots[NUM_PARKING_SPOTS];
+Strip landingStrips[4];// Увеличили с 7 до 14
+
 int selectedStripIndex = -1;
 int selectedSize = -1;
 Color DGRAY = {30,30,30,0};
@@ -291,6 +311,19 @@ int main() {
                 DrawCircleV(plane.radarPosition, 4, GREEN);
             }
         }
+
+        DrawText(TextFormat("Parked: %d", Global::parkedCount),
+                 screenWidth - 220, 20, 30, GREEN);
+
+        for (const auto& strip : landingStripsData) {
+            // Рисуем линии между точками пути
+            for (size_t i = 0; i < strip.pathToParking.size() - 1; ++i) {
+                DrawLineV(strip.pathToParking[i], strip.pathToParking[i+1], RED);
+            }
+        }
+
+        DrawText(TextFormat("Level: %d", Global::level), screenWidth - 220, 50, 30, GREEN);
+        DrawText(TextFormat("Left: %d", Global::parkedNeeded - Global::parkedCount), screenWidth - 220, 80, 30, GREEN);
 
 
 

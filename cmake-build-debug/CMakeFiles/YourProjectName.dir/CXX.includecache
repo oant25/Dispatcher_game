@@ -13,6 +13,10 @@ math.h
 -
 raymath.h
 /Users/extile/Desktop/123/Dispatcher_game/raymath.h
+Global.h
+/Users/extile/Desktop/123/Dispatcher_game/Global.h
+Structures.h
+/Users/extile/Desktop/123/Dispatcher_game/Structures.h
 
 /Users/extile/Desktop/123/Dispatcher_game/Airplane.h
 raylib.h
@@ -24,6 +28,8 @@ vector
 cstddef
 -
 
+/Users/extile/Desktop/123/Dispatcher_game/Global.h
+
 /Users/extile/Desktop/123/Dispatcher_game/Structures.h
 raylib.h
 /Users/extile/Desktop/123/Dispatcher_game/raylib.h
@@ -31,18 +37,6 @@ unordered_map
 -
 vector
 -
-
-/Users/extile/Desktop/123/Dispatcher_game/main.cpp
-raylib.h
-/Users/extile/Desktop/123/Dispatcher_game/raylib.h
-Airplane.h
-/Users/extile/Desktop/123/Dispatcher_game/Airplane.h
-Structures.h
-/Users/extile/Desktop/123/Dispatcher_game/Structures.h
-vector
--
-raymath.h
-/Users/extile/Desktop/123/Dispatcher_game/raymath.h
 
 /usr/local/Cellar/raylib/5.5/include/raylib.h
 stdarg.h
