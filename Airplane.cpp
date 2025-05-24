@@ -2,10 +2,12 @@
 #include <math.h>
 #include "raymath.h"
 
-Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone)
+Airplane::Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius)
         : texture(tex), size(sz), color(clr),
-          orbitAngle((float)GetRandomValue(0, 360)),
-          assignedOrbit(zone), isFlying(true), speed(1.0*35) // Скорость без умножения на 60
+          speed(PLANE_SPEEDS.at(sz)), // Скорость из словаря
+          assignedOrbit(zone),
+          isFlying(true),
+          orbitAngle((float)GetRandomValue(0, 360)) // Скорость без умножения на 60
 {
     if (assignedOrbit) {
         // Начальная позиция на орбите

@@ -12,6 +12,14 @@ struct OrbitZone {
     bool occupied;
 };
 
+const std::unordered_map<int, float> PLANE_SPEEDS = {
+        {1, 50.0f},  // Size 1: высокая скорость
+        {2, 40.0f},
+        {3, 30.0f},
+        {4, 20.0f},
+        {5, 10.0f}   // Size 5: низкая скорость
+};
+
 // Structures.h
 const std::unordered_map<int, float> PLANE_SCALES = {
         {1, 0.02f},  // Размер 1: маленький

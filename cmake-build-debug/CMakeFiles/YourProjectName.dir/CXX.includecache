@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/Users/extile/Desktop/123/Dispatcher_game/Airplane.cpp
+Airplane.h
+/Users/extile/Desktop/123/Dispatcher_game/Airplane.h
+math.h
+-
+raymath.h
+/Users/extile/Desktop/123/Dispatcher_game/raymath.h
+
 /Users/extile/Desktop/123/Dispatcher_game/Airplane.h
 raylib.h
 /Users/extile/Desktop/123/Dispatcher_game/raylib.h

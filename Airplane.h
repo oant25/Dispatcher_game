@@ -24,11 +24,11 @@ public:
     bool isParking = false;
     std::vector<Vector2> currentPath;
     size_t currentPathIndex = 0;
-    float movementSpeed = 3.0f;
+    float movementSpeed = 1.0f;
     OrbitZone* assignedOrbit;
     float orbitAngle;
 
-    Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone);
+    Airplane(Texture2D tex, int sz, Color clr, OrbitZone* zone, Vector2 radarCenter, float radarRadius);
     void UpdateOrbit();
     void Draw() const;
     void StartLanding(const LandingStrip& strip);

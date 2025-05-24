@@ -17,8 +17,8 @@ const int NUM_PARKING_SPOTS = 14; // Увеличили с 7 до 14
 ParkingSpot parkingSpots[NUM_PARKING_SPOTS];
 int selectedStripIndex = -1;
 int selectedSize = -1;
-Color DGRAY = {30,30,30,255};
-Color BBLACK = {0,0,0,105};
+Color DGRAY = {30,30,30,0};
+Color BBLACK = {0,0,0,0};
 
 std::vector<LandingStrip> landingStripsData = {
         { // Большая полоса 1
@@ -185,9 +185,11 @@ int main() {
                         if(!zone.occupied) {
                             airplanes.emplace_back(
                                     planeTextures[i],
-                                    i+1,
+                                    i+1,      // Размер (1-5)
                                     WHITE,
-                                    &zone
+                                    &zone,
+                                    radarPos,
+                                    radarSize/2-15
                             );
                             break;
                         }
@@ -217,7 +219,7 @@ int main() {
         // Парковка
         DrawRectangle(235,390,370,110,BBLACK);
         for(int i = 0; i < 7; i++) {
-            DrawRectangle(275 + 48*i, 408, 7, 65, WHITE);
+            DrawRectangle(275 + 48*i, 408, 7, 65, NONE);
         }
 
         // Радар
@@ -246,7 +248,7 @@ int main() {
                     (int)zone.center.x,
                     (int)zone.center.y,
                     zone.radius,
-                    zone.occupied ? RED : SKYBLUE
+                    zone.occupied ? NONE : NONE
             );
         }
         for (auto& plane : airplanes) {
@@ -265,8 +267,8 @@ int main() {
             plane.Draw();
         }
             for (const auto& strip : landingStripsData) { // Используем landingStripsData
-                DrawCircleV(strip.startPoint, 10, strip.occupied ? RED : GREEN);
-                DrawCircleV(strip.endPoint, 10, BLUE);
+                DrawCircleV(strip.startPoint, 10, strip.occupied ? NONE : NONE);
+                DrawCircleV(strip.endPoint, 10, NONE);
             }
         DrawCircleV(radarPos, radarSize/2, Fade(DARKGRAY, 0.3f));
         DrawCircleLines(radarPos.x, radarPos.y, radarSize/2, DARKBROWN);
