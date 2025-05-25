@@ -15,7 +15,7 @@ public:
     float rotation;
     int size;
     bool isFlying;
-    bool isParked;
+    bool isParked = false;
     int currentStrip;
     int parkingSpot;
     Color color;

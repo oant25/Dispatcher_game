@@ -1,4 +1,6 @@
 #include <cstdio>
+#include <queue>
+#include <string>
 
 #include "raylib.h"
 #include "Airplane.h"
@@ -12,11 +14,14 @@ const int screenHeight = 750;
 
 // Инициализация глобальных переменных
 std::vector<Airplane> airplanes;
+std::vector<Airplane> inactive_airplanes;
 std::vector<OrbitZone> orbitZones(NUM_ORBIT_ZONES);
 std::vector<ParkingSpot> parkingSpots(NUM_PARKING_SPOTS);
 int level = 0;
-
+std::queue<std::pair<Airplane, int>> queue_plane;
+long long coef;
 bool isComplete = false;
+int lim = 0;
 namespace Global {
     int level = 1;
     int parkedNeeded = 4;
@@ -28,19 +33,26 @@ struct Level {
     int task_parked;
     int count_planes[5];
 };
+bool IsSelectionState = true;
 int current_level = 1;
+int fine = 0;
 Level levels[4] = {
     {1, 4, {1, 1, 1, 1, 0}},
     {2, 6, {1, 1, 1, 1, 2}},
 {3, 10, {4, 2, 1, 1, 2}},
 {1, 14, {3, 3, 2, 4, 2}}
 };
+std::string names[5] = {"SKYHUWK", "KING AIR 350", "BOEING 777", "BOEING 737", "AIREUS A230"};
 void CompleteLevel()
 {
     isComplete = true;
 }
 void ResetGame()
 {
+    lim = 0;
+    inactive_airplanes.clear();
+    Global::parkedNeeded = levels[current_level - 1].task_parked;
+    while (!queue_plane.empty()) { queue_plane.pop(); }
     int* counts = levels[current_level - 1].count_planes;
     for (int i = 0; i < 5; ++i)
     {
@@ -127,15 +139,48 @@ void InitializeStrips() {
         landingStrips[i] = { areas[i], false, i+1 };
     }
 }
+void CreatePlane()
+{
+    if (((long long)(GetTime()) - coef) == lim)
+    {
+        lim += 11;
+        std::vector<int> full;
+        for (int i = 0; i < 5; i++) {
+            if (Global::count_planes[i] != 0)
+                full.push_back(i);
+        }
+        if (full.empty()) return;
+        int num = full[rand() % full.size()];
+        for (auto& zone : orbitZones) {
+            if (!zone.occupied) {
+                airplanes.emplace_back
+                (
+                    planeTextures[num],
+                    num+1,      // Размер (1-5)
+                    WHITE,
+                    &zone,
+                    radarPos,
+                    radarSize/2-15
+                    );
+                break;
+            }
+        }
+        queue_plane.push({(airplanes.back()), (long long)(GetTime()) - coef});
+        Global::count_planes[num]--;
+
+    }
+}
 void StartLevel() {
     ResetGame();
+    fine = 0;
+    IsSelectionState = false;
+    coef = (long long)(GetTime());
     int* counts = levels[current_level - 1].count_planes;
     for (int i = 0; i < 5; ++i)
     {
         Global::count_planes[i] = counts[i];
     }
-    Global::parkedNeeded = levels[current_level - 1].task_parked;
-    for (int i = 0; i < 5; ++i)
+    /*for (int i = 0; i < 5; ++i)
     {
         for (int j = 0; j < counts[i]; ++j)
         {
@@ -154,7 +199,7 @@ void StartLevel() {
                 }
             }
         }
-    }
+    }*/
 }
 void InitializeParking() {
     const float startX = 275.0f; // Начальная позиция X
@@ -180,7 +225,6 @@ int main()
         level= Global::level;
     }
     float alpha = 0;
-
     // Загрузка текстур
     Texture2D fogTexture; // Это переменная, где будет храниться туман
     fogTexture = LoadTexture("res/4321.jpg"); // Загружаем картинку
@@ -221,8 +265,14 @@ int main()
     const float rotationSpeed = 1.5f;
 
     while (!WindowShouldClose()) {
-
-
+        if (Global::parkedNeeded - Global::parkedCount == 0)
+        {
+            IsSelectionState = true;
+            ResetGame();
+        }
+        if (IsSelectionState == false) {
+            CreatePlane();
+        }
         rotationAngle += rotationSpeed;
         if(rotationAngle >= 360) rotationAngle = 0;
         int key = GetKeyPressed();
@@ -241,7 +291,7 @@ int main()
 
             //Выбор самолета
             for (auto& plane : airplanes) {
-                if (CheckCollisionPointCircle(mousePos, plane.position, 80)) {
+                if (CheckCollisionPointCircle(mousePos, plane.position, 80)&& plane.isParked == false && plane.isParking == false && plane.isLanding == false) {
                     selectedPlane = &plane;
                     break;
                 }
@@ -258,7 +308,6 @@ int main()
             // 3. Назначение посадки
             if (selectedPlane && selectedStrip) {
                 // Снимаем ограничения
-                Global::count_planes[selectedPlane->size - 1]--;
                 selectedPlane->StartLanding(*selectedStrip);
                 selectedPlane = nullptr;
                 selectedStrip = nullptr;
@@ -277,6 +326,7 @@ int main()
             }
             if (CheckCollisionPointRec(mousePos, buttons[2]))
             {
+                IsSelectionState = true;
                 if (current_level < 4) {
                     current_level++;
                 }
@@ -287,6 +337,7 @@ int main()
             }
             if (CheckCollisionPointRec(mousePos, buttons[3]))
             {
+                IsSelectionState = true;
                 if (current_level > 1) {
                     current_level--;
                 }
@@ -386,7 +437,9 @@ int main()
                 plane.UpdateOrbit(); // Должен вызываться каждый кадр
             }
         }
-
+        for (const auto& plane : inactive_airplanes) {
+            plane.Draw();
+        }
         for(const auto& plane : airplanes) {
             plane.Draw();
         }
@@ -396,7 +449,26 @@ int main()
             }
         DrawCircleV(radarPos, radarSize/2, Fade(DARKGRAY, 0.3f));
         DrawCircleLines(radarPos.x, radarPos.y, radarSize/2, DARKBROWN);
-
+        if (!queue_plane.empty() && (45 - ((long long)(GetTime()) - coef - queue_plane.front().second) <= 0))
+        {
+            fine++;
+            queue_plane.pop();
+            airplanes.erase(airplanes.begin());
+            Global::parkedCount++;
+        }
+        int len = queue_plane.size();
+        for (int i = 0; i < len; ++i) {
+            std::pair<Airplane, int> a = queue_plane.front();
+            if (airplanes[i].isParked == true)
+            {
+                inactive_airplanes.emplace_back(airplanes[i]);
+                airplanes.erase(airplanes.begin() + i);
+                queue_plane.pop();
+                continue;
+            }
+            queue_plane.push(a);
+            queue_plane.pop();
+        }
 // Отрисовка самолетов на радаре
         for (const auto& plane : airplanes) {
             if (plane.isFlying) {
@@ -412,20 +484,37 @@ int main()
             }
         }
 
-
-
         DrawText(TextFormat("Level: %d", Global::level), screenWidth - 520, 50, 30, GREEN);
         DrawText(TextFormat("Left: %d", Global::parkedNeeded - Global::parkedCount), screenWidth - 520, 80, 30, GREEN);
-        DrawText(TextFormat("SKYHUWK: %d", Global::count_planes[0]), screenWidth - 520, 120, 20, GREEN);
-        DrawText(TextFormat("KING AIR 350: %d", Global::count_planes[1]), screenWidth - 520, 150, 20, GREEN);
-        DrawText(TextFormat("BOEING 777: %d", Global::count_planes[2]), screenWidth - 520, 180, 20, GREEN);
-        DrawText(TextFormat("BOEING 737: %d", Global::count_planes[3]), screenWidth - 520, 210, 20, GREEN);
-        DrawText(TextFormat("AIREUS A230: %d", Global::count_planes[4]), screenWidth - 520, 240, 20, GREEN);
+        int temp = 120;
+        if (IsSelectionState == false)
+            {
+            DrawText(TextFormat("%d:%d", ((long long)(GetTime()) - coef) / 60,  ((long long)(GetTime()) - coef) % 60), screenWidth - 300, 50, 30, GREEN);
+        }
+        DrawText(TextFormat("Fine: %d", fine), screenWidth - 300, 80, 30, GREEN);
+        int count = queue_plane.size();
+        for (int i = 0; i < count; ++i)
+            {
+            std::pair<Airplane, int> a = queue_plane.front();
+            DrawText(names[a.first.size - 1].c_str(), screenWidth - 520, temp, 20, GREEN);
+            DrawText(TextFormat("%d", 45 - ((long long)(GetTime()) - coef - a.second)), screenWidth - 300, temp, 20, GREEN);
+            queue_plane.push(a);
+            queue_plane.pop();
+            temp += 30;
+        }
+        if (IsSelectionState == true) {
+            DrawText(TextFormat("SKYHUWK: %d", Global::count_planes[0]), screenWidth - 520, 120, 20, GREEN);
+            DrawText(TextFormat("KING AIR 350: %d", Global::count_planes[1]), screenWidth - 520, 150, 20, GREEN);
+            DrawText(TextFormat("BOEING 777: %d", Global::count_planes[2]), screenWidth - 520, 180, 20, GREEN);
+            DrawText(TextFormat("BOEING 737: %d", Global::count_planes[3]), screenWidth - 520, 210, 20, GREEN);
+            DrawText(TextFormat("AIREUS A230: %d", Global::count_planes[4]), screenWidth - 520, 240, 20, GREEN);
+
+        }
         if (isComplete == true)
             {
-            DrawText("Congratulations, you have completed the level!",1000-50-25,370, 20,GREEN);
+            IsSelectionState = true;
+            ResetGame();
         }
-
         float gameWidth = screenWidth / 1.6f;
         float gameHeight = screenHeight;
 
@@ -457,7 +546,7 @@ int main()
         DrawFPS(1000-78,10);
         EndDrawing();
     }
-
+    GetTime();
     // Очистка
     UnloadTexture(background);
     for(auto& tex : planeTextures) UnloadTexture(tex);
