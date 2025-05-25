@@ -1,0 +1,3 @@
+C:/Users/romak/Downloads/Telegram Desktop/Dispatcher_game/Dispatcher_game/cmake-build-debug/_deps/raylib-subbuild/CMakeFiles/raylib-populate.dir
+C:/Users/romak/Downloads/Telegram Desktop/Dispatcher_game/Dispatcher_game/cmake-build-debug/_deps/raylib-subbuild/CMakeFiles/edit_cache.dir
+C:/Users/romak/Downloads/Telegram Desktop/Dispatcher_game/Dispatcher_game/cmake-build-debug/_deps/raylib-subbuild/CMakeFiles/rebuild_cache.dir

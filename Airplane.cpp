@@ -88,7 +88,7 @@ void Airplane::UpdateMovement() {
         Global::parkedCount++;
         TraceLog(LOG_INFO, "Plane parked. Total parked: %d", Global::parkedCount);
         if (Global::parkedCount >= Global::parkedNeeded) {
-            ResetGame();
+            CompleteLevel();
         }
         return;
     }

@@ -1,3 +1,5 @@
+#include <cstdio>
+
 #include "raylib.h"
 #include "Airplane.h"
 #include "Structures.h"
@@ -5,7 +7,6 @@
 #include "raymath.h"
 const int screenWidth = 1450;
 const int screenHeight = 750;
-
 #include "Global.h"
 
 
@@ -14,19 +15,42 @@ std::vector<Airplane> airplanes;
 std::vector<OrbitZone> orbitZones(NUM_ORBIT_ZONES);
 std::vector<ParkingSpot> parkingSpots(NUM_PARKING_SPOTS);
 int level = 0;
+
+bool isComplete = false;
 namespace Global {
     int level = 1;
     int parkedNeeded = 4;
     int parkedCount = 0;
+    int count_planes[5] = {1, 1, 1, 1, 0};
 }
-
-void ResetGame() {
+struct Level {
+    int number;
+    int task_parked;
+    int count_planes[5];
+};
+int current_level = 1;
+Level levels[4] = {
+    {1, 4, {1, 1, 1, 1, 0}},
+    {2, 6, {1, 1, 1, 1, 2}},
+{3, 10, {4, 2, 1, 1, 2}},
+{1, 14, {3, 3, 2, 4, 2}}
+};
+void CompleteLevel()
+{
+    isComplete = true;
+}
+void ResetGame()
+{
+    int* counts = levels[current_level - 1].count_planes;
+    for (int i = 0; i < 5; ++i)
+    {
+        Global::count_planes[i] = counts[i];
+    }
+    isComplete = false;
     airplanes.clear();
     for (auto& spot : parkingSpots) spot.occupied = false;
     for (auto& zone : orbitZones) zone.occupied = false;
     Global::parkedCount = 0;
-    Global::level++;
-    Global::parkedNeeded += 2; // Increase planes needed per level
 }
 
 
@@ -34,7 +58,7 @@ void ResetGame() {
 // Глобальные переменные
 
 Color NONE = {0,0,0,0};
-Strip landingStrips[4];// Увеличили с 7 до 14
+Strip landingStrips[4];
 
 int selectedStripIndex = -1;
 int selectedSize = -1;
@@ -67,8 +91,9 @@ std::vector<LandingStrip> landingStripsData = {
 // Обработка выбора
 Airplane* selectedPlane = nullptr;
 LandingStrip* selectedStrip = nullptr;
-
-
+Texture2D planeTextures[5];
+const int radarSize = screenWidth / 7 + 60;
+Vector2 radarPos = { screenWidth - radarSize - 10 + 100 + 10, screenHeight - radarSize - 10 + 100 };
 void InitializeOrbitZones() {
     Vector2 centers[NUM_ORBIT_ZONES] = {
             {40.0f, 20.0f}, {100.0f, 430.0f},
@@ -102,7 +127,35 @@ void InitializeStrips() {
         landingStrips[i] = { areas[i], false, i+1 };
     }
 }
-
+void StartLevel() {
+    ResetGame();
+    int* counts = levels[current_level - 1].count_planes;
+    for (int i = 0; i < 5; ++i)
+    {
+        Global::count_planes[i] = counts[i];
+    }
+    Global::parkedNeeded = levels[current_level - 1].task_parked;
+    for (int i = 0; i < 5; ++i)
+    {
+        for (int j = 0; j < counts[i]; ++j)
+        {
+            for(auto& zone : orbitZones)
+            {
+                if (!zone.occupied) {
+                    airplanes.emplace_back(
+                        planeTextures[i],
+                        i+1,
+                        WHITE,
+                        &zone,
+                        radarPos,
+                        radarSize/2-15
+                        );
+                    break;
+                }
+            }
+        }
+    }
+}
 void InitializeParking() {
     const float startX = 275.0f; // Начальная позиция X
     const float spacing = 48.0f; // Расстояние между местами
@@ -120,7 +173,8 @@ void InitializeParking() {
         };
     }
 }
-int main() {
+int main()
+{
     InitWindow(screenWidth, screenHeight, "Air Traffic Control");
     if (Global::level >= 1){
         level= Global::level;
@@ -131,7 +185,6 @@ int main() {
     Texture2D fogTexture; // Это переменная, где будет храниться туман
     fogTexture = LoadTexture("res/4321.jpg"); // Загружаем картинку
     Texture2D background = LoadTexture("res/1234.png");
-    Texture2D planeTextures[5];
     if (fogTexture.id == 0) {
         printf("Ошибка: не удалось загрузить туман!\n");
     }
@@ -164,23 +217,29 @@ int main() {
     SetTargetFPS(60);
 
     // Параметры радара
-    const int radarSize = screenWidth / 7 + 60;
-    Vector2 radarPos = { screenWidth - radarSize - 10 + 100 + 10, screenHeight - radarSize - 10 + 100 };
     float rotationAngle = 0.0f;
     const float rotationSpeed = 1.5f;
-
 
     while (!WindowShouldClose()) {
 
 
         rotationAngle += rotationSpeed;
         if(rotationAngle >= 360) rotationAngle = 0;
-
+        int key = GetKeyPressed();
+        if (key >= KEY_ONE && key <= KEY_FIVE)
+        {
+            for (auto& plane : airplanes) {
+                if (plane.size == key - KEY_ONE + 1 && plane.isParked == false && plane.isParking == false && plane.isLanding == false) {
+                    selectedPlane = &plane;
+                    break;
+                }
+            }
+        }
         // Обработка ввода
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mousePos = GetMousePosition();
 
-            // 1. Выбор самолета
+            //Выбор самолета
             for (auto& plane : airplanes) {
                 if (CheckCollisionPointCircle(mousePos, plane.position, 80)) {
                     selectedPlane = &plane;
@@ -199,6 +258,7 @@ int main() {
             // 3. Назначение посадки
             if (selectedPlane && selectedStrip) {
                 // Снимаем ограничения
+                Global::count_planes[selectedPlane->size - 1]--;
                 selectedPlane->StartLanding(*selectedStrip);
                 selectedPlane = nullptr;
                 selectedStrip = nullptr;
@@ -207,12 +267,46 @@ int main() {
 
         if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             Vector2 mousePos = GetMousePosition();
-
-            for(int i = 0; i < 5; i++) {
-                if(CheckCollisionPointRec(mousePos, buttons[i])) {
+            if (CheckCollisionPointRec(mousePos, buttons[0]))
+            {
+                StartLevel();
+            }
+            if (CheckCollisionPointRec(mousePos, buttons[1]))
+            {
+                StartLevel();
+            }
+            if (CheckCollisionPointRec(mousePos, buttons[2]))
+            {
+                if (current_level < 4) {
+                    current_level++;
+                }
+                ResetGame();
+                Global::level = current_level;
+                Global::parkedCount = 0;
+                Global::parkedNeeded = levels[current_level - 1].task_parked;
+            }
+            if (CheckCollisionPointRec(mousePos, buttons[3]))
+            {
+                if (current_level > 1) {
+                    current_level--;
+                }
+                ResetGame();
+                Global::level = current_level;
+                Global::parkedCount = 0;
+                Global::parkedNeeded = levels[current_level - 1].task_parked;
+            }
+            if (CheckCollisionPointRec(mousePos, buttons[4]))
+            {
+                break;
+            }
+            /*for(int i = 0; i < 5; i++) {
+                if(CheckCollisionPointRec(mousePos, buttons[i]))
+                {
+                    Global::count_planes[i]++;
                     // Ищем свободную зону
                     for(auto& zone : orbitZones) {
-                        if(!zone.occupied) {
+                        if(!zone.occupied)
+                            {
                             airplanes.emplace_back(
                                     planeTextures[i],
                                     i+1,      // Размер (1-5)
@@ -225,7 +319,7 @@ int main() {
                         }
                     }
                 }
-            }
+            }*/
         }
 
         // Отрисовка
@@ -264,14 +358,14 @@ int main() {
         DrawCircleV(radarPos, 5, GREEN);
 
         // Кнопки
-        const char* buttonTexts[5] = {"Size 1", "Size 2", "Size 3", "Size 4", "Size 5"};
+        const char* buttonTexts[5] = {"Start level", "Restart level", "Next level", "Previous level", "Exit"};
         for(int i = 0; i < numButtons; i++) {
             Color btnColor = CheckCollisionPointRec(GetMousePosition(), buttons[i]) ? RED : BLACK;
             DrawRectangleRec(buttons[i], btnColor);
             DrawText(buttonTexts[i],
                      buttons[i].x + (buttons[i].width - MeasureText(buttonTexts[i], 20))/2,
                      buttons[i].y + 15,
-                     20, WHITE);
+                     20, GREEN);
         }
         for(const auto& zone : orbitZones) {
             DrawCircleLines(
@@ -309,10 +403,6 @@ int main() {
                 // Получаем центр и радиус радара
                 Vector2 radarCenter = radarPos;
                 float radarRadius = radarSize / 2 - 15;
-
-                // Рассчитываем относительное положение самолета
-                // Масштабируем координаты
-                // TraceLog(LOG_INFO, "Точка радара: (%.1f, %.1f)", radarPoint.x, radarPoint.y);
                 }
             }
 
@@ -324,17 +414,26 @@ int main() {
 
 
 
-        DrawText(TextFormat("Level: %d", Global::level), screenWidth - 220, 50, 30, GREEN);
-        DrawText(TextFormat("Left: %d", Global::parkedNeeded - Global::parkedCount), screenWidth - 220, 80, 30, GREEN);
-        // Определяем размеры области, где будет поле и туман
-        float gameWidth = screenWidth / 1.6f; // Ширина поля (как в твоём примере)
-        float gameHeight = screenHeight;      // Высота поля (весь экран по высоте)
+        DrawText(TextFormat("Level: %d", Global::level), screenWidth - 520, 50, 30, GREEN);
+        DrawText(TextFormat("Left: %d", Global::parkedNeeded - Global::parkedCount), screenWidth - 520, 80, 30, GREEN);
+        DrawText(TextFormat("SKYHUWK: %d", Global::count_planes[0]), screenWidth - 520, 120, 20, GREEN);
+        DrawText(TextFormat("KING AIR 350: %d", Global::count_planes[1]), screenWidth - 520, 150, 20, GREEN);
+        DrawText(TextFormat("BOEING 777: %d", Global::count_planes[2]), screenWidth - 520, 180, 20, GREEN);
+        DrawText(TextFormat("BOEING 737: %d", Global::count_planes[3]), screenWidth - 520, 210, 20, GREEN);
+        DrawText(TextFormat("AIREUS A230: %d", Global::count_planes[4]), screenWidth - 520, 240, 20, GREEN);
+        if (isComplete == true)
+            {
+            DrawText("Congratulations, you have completed the level!",1000-50-25,370, 20,GREEN);
+        }
 
-// Рисуем игровое поле
+        float gameWidth = screenWidth / 1.6f;
+        float gameHeight = screenHeight;
+
+
 
 
 // Считаем, насколько густой туман
-// Прозрачность зависит от уровня
+// Прозрачность зависит от уровня(хуй там)
         if (IsKeyPressed(KEY_D)) alpha = alpha+0.05;
         if (IsKeyPressed(KEY_S)) alpha = alpha-0.05;
 
@@ -351,6 +450,7 @@ int main() {
                 0.0f,   // Угол поворота (не поворачиваем)
                 fogColor // Цвет с прозрачностью
         );
+        DrawText("Select signal:",1000-50-25,400, 25,GREEN);
 
 
 

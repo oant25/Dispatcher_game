@@ -20,7 +20,7 @@ public:
     int parkingSpot;
     Color color;
     float orbitRadius;
-    bool isLanding = false; // Объявлено один раз
+    bool isLanding = false;
     bool isParking = false;
     std::vector<Vector2> currentPath;
     size_t currentPathIndex = 0;
